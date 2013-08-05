@@ -7,10 +7,10 @@
 		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 		
 		<title>手机上的豆瓣读书</title>
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+		<link rel="stylesheet" href="/css/jquery.mobile-1.3.2.min.css" />
 		<link href="/css/app.css" rel="stylesheet">
-		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.mobile-1.3.2.min.js"></script>
 		<script type="text/javascript">
 			$(function() {
 				$("body").on("click", "#menu", function(e) {

@@ -78,6 +78,7 @@ class BookHelper{
 			$data = array(
 				'next'=> ($content['count']+$content['start']) < $content['total'] ? $page+1 : 0,
 				'prev'=> $page-1,
+				'list'=> array()
 			);
 			if(!empty($content['annotations'])) {
 				foreach($content['annotations'] as $item) {
@@ -124,6 +125,6 @@ class BookHelper{
 	public static function getStart() {
 		$page = intval( Yii::app()->request->getParam('page', 0) );
 		$page = max($page, 1);
-		return array($page, ($page - 1) * self::PAGE_SIZE);
+		return array($page, ($page - 1) * self::PAGE_SIZE, self::PAGE_SIZE);
 	}
 }

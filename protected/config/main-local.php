@@ -102,14 +102,6 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'staticUrl'=>'/static',
-		'baseUrl'=>'http://www.findlark.com',
-		'adminEmail'=>'webmaster@example.com',
-		'socketHost'=>'socket.findlark.com',
-		'socketPort'=>'9091',
-		'gmailAddress'=>'fx4084@gmail.com',
-		'gmailPassword'=>'000000',
-		'myMobile'=>'0',
-		'myMobilePassword'=>'0',
+		'baseUrl'=>'http://douban.findlark.com',
 	),
 );

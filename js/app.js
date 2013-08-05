@@ -22,6 +22,7 @@ function _AppBook() {
 	this.keyPrefix = 'book_';
 	this.page = 1;
 	this.listBusy = false;
+	this.bookListAddress = '/book/list';
 
 	this.loadInfo = function(msg) {
 		$("#load-more").children().html(msg);
@@ -52,7 +53,7 @@ function _AppBook() {
 		
 		_this.loadInfo('加载中...');
 		this.ajaxRequest(
-			'/book/list/',
+			this.bookListAddress,
 			{page: this.page},
 			function(data) {
 				_this.listBusy = false;
@@ -95,10 +96,3 @@ function _AppBook() {
 }
 
 var AppBook = new _AppBook;
-
-$(function() {
-	AppBook.getBookList();
-	$("#load-more").click(function() {
-		AppBook.getBookList();
-	});
-});

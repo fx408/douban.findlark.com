@@ -91,43 +91,6 @@ class Book extends CActiveRecord
 		));
 	}
 	
-	public function addBook($bookid) {
-		$data = $this->findByPk($bookid);
-		if(empty($data)) {
-			$data = Curl::model()->request('http://api.douban.com/v2/book/'.$bookid);
-			
-			if(!$data) {
-				echo "failed! ".$bookid." \n";
-				return;
-			}
-			
-			$data = CJSON::decode($data, false);
-			
-			$book = array();
-			$book['title'] = $data->title;
-			$book['author'] = implode(',', $data->author);
-			$book['tags'] = $data->tags[0]->name.', '.$data->tags[1]->name;
-			$book['description'] = '';
-			$book['numRaters'] = $data->rating->numRaters;
-			$book['score'] = $data->rating->average;
-			$book['img'] = $data->images->small;
-			$book['bookid'] = $data->id;
-			$book['summary'] = $data->summary;
-			$book['author_intro'] = $data->author_intro;
-			$book['catalog'] = $data->catalog;
-			// 73628765/ http://api.douban.com/people/73628765/collection?
-			$model = Book::model();
-			$model->bookid = $bookid;
-			$model->content = CJSON::encode($book);
-			$model->weights = 1;
-			$model->timeline = time();
-			$model->isNewRecord = true;
-			if(!$model->save()) {
-				throw new Exception(var_export($model->getErrors(), true));
-			}
-		}
-	}
-	
 	public function getList() {
 		$page = intval( Yii::app()->request->getParam('page') );
 		$page = max($page, 1);
@@ -158,5 +121,44 @@ class Book extends CActiveRecord
 		}
 		
 		return array($page, $result);
+	}
+	
+	public function addBook($data) {
+		$book = array();
+		$book['title'] = $data['title'];
+		$book['author'] = implode(',', $data['author']);
+		$book['description'] = '';
+		$book['numRaters'] = $data['rating']['numRaters'];
+		$book['score'] = $data['rating']['average'];
+		$book['img'] = $data['images']['small'];
+		$book['bookid'] = $data['id'];
+		$book['summary'] = $data['summary'];
+		$book['author_intro'] = $data['author_intro'];
+		$book['catalog'] = $data['catalog'];
+		
+		$data['tags'] = array_slice($data['tags'],0,3);
+		$book['tags'] = array();
+		foreach($data['tags'] as $item) {
+			$book['tags'][] = $item['name'];
+		}
+		$book['tags'] = implode(', ', $book['tags']);
+		
+		$bookid = $data['id'];
+		
+		$find = $this->findByPk($bookid);
+		if(empty($find)) {
+			$model = Book::model();
+			$model->bookid = $bookid;
+			$model->content = CJSON::encode($book);
+			$model->weights = 1;
+			$model->timeline = time();
+			$model->isNewRecord = true;
+			if(!$model->save()) {
+				// throw new Exception(var_export($model->getErrors(), true));
+			}
+		}
+		
+		$book['bookid'] = $bookid;
+		return $book;
 	}
 }
