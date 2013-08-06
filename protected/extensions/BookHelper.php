@@ -43,7 +43,7 @@ class BookHelper{
 			
 			$match = preg_match("#\<div\s+class=\"book\-content\">(.*?)<div\s+class=\"rel-info\">#is", $content, $reading);
 			if(!$match || !isset($reading[1])) {
-				throw new Exception("查询试读资料失败!");
+				return array('', '');
 			}
 			$reading = preg_replace("#<(?!img|p).*?>#", "", $reading[1]);
 			
@@ -73,7 +73,7 @@ class BookHelper{
 			$content = Curl::model()->request($url);
 			
 			$content && $content = CJSON::decode($content);
-			if(!$content || !isset($content['annotations'])) throw new Exception('获取读书笔记失败!');
+			if(!$content || !isset($content['annotations'])) return '';
 			
 			$data = array(
 				'next'=> ($content['count']+$content['start']) < $content['total'] ? $page+1 : 0,
@@ -109,7 +109,7 @@ class BookHelper{
 			$content = Curl::model()->request($url);
 			
 			$content && $content = CJSON::decode($content);
-			if(!$content || !isset($content['book'])) throw new Exception('获取读书笔记失败!');
+			if(!$content || !isset($content['book'])) return '';
 			
 			$data = array();
 			$data['author_user'] = $content['author_user'];

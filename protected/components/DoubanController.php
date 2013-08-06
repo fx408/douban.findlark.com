@@ -16,7 +16,6 @@ class DoubanController extends Controller{
 		$book->author_intro = $data->author_intro;
 		$book->catalog = $data->catalog;
 		
-		unset($data);
 		return $book;
 	}
 }

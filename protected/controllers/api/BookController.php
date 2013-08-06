@@ -1,12 +1,14 @@
 <?php
 
-class BookController extends DoubanController {
+class BookController extends ApiController {
 	// 详细
 	public function actionDetail($id) {
 		$data = $this->getBook($id);
+		if(!$data) $this->_end(1, '获取书籍数据失败!');
+		
 		$reading = BookHelper::getBookReading($data->bookid);
 		
-		$this->render('detail', array('data'=> $data, 'reading'=> $reading));
+		$this->_end(0, array($data, $reading));
 	}
 	
 	// 列表
@@ -20,18 +22,10 @@ class BookController extends DoubanController {
 		$this->_end($error, $data, array('page'=> $page, 'timeline'=> $timeline));
 	}
 	
-	
 	// 试读详细
 	public function actionReading($bookid, $id) {
-		$book = $this->getBook($bookid, ' - 试读');
 		list($title, $content) = BookHelper::getReadingDetail($id);
-		$list = BookHelper::getBookReading($bookid);
-		$this->render('reading', array(
-			'data'=> $content,
-			'title'=> $title,
-			'list'=> $list,
-			'book'=> $book,
-			'readingId'=> $id
-		));
+		
+		$this->_end(0, array('title'=> $title, 'content'=> $content));
 	}
 }

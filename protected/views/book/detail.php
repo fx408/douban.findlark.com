@@ -16,7 +16,6 @@
 		</li>
 	</ul>
 	<?php
-		$reading = BookHelper::getBookReading($data->bookid);
 		if($reading) {
 	?>
 	<ul data-role="listview" data-divider-theme="b" data-inset="true">
