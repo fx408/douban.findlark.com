@@ -6,6 +6,9 @@
  * The followings are the available columns in table 'book':
  * @property integer $bookid
  * @property string $content
+ * @property string $catalog
+ * @property string $author_intro
+ * @property string $summary
  * @property string $timeline
  * @property integer $weights
  */
@@ -40,9 +43,10 @@ class Book extends CActiveRecord
 			array('bookid, content, timeline', 'required'),
 			array('bookid, weights', 'numerical', 'integerOnly'=>true),
 			array('timeline', 'length', 'max'=>10),
+			array('catalog, author_intro, summary', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('bookid, content, timeline, weights', 'safe', 'on'=>'search'),
+			array('bookid, content, catalog, author_intro, summary, timeline, weights', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,6 +69,9 @@ class Book extends CActiveRecord
 		return array(
 			'bookid' => 'Bookid',
 			'content' => 'Content',
+			'catalog' => 'Catalog',
+			'author_intro' => 'Author Intro',
+			'summary' => 'Summary',
 			'timeline' => 'Timeline',
 			'weights' => 'Weights',
 		);
@@ -83,6 +90,9 @@ class Book extends CActiveRecord
 
 		$criteria->compare('bookid',$this->bookid);
 		$criteria->compare('content',$this->content,true);
+		$criteria->compare('catalog',$this->catalog,true);
+		$criteria->compare('author_intro',$this->author_intro,true);
+		$criteria->compare('summary',$this->summary,true);
 		$criteria->compare('timeline',$this->timeline,true);
 		$criteria->compare('weights',$this->weights);
 
@@ -91,18 +101,20 @@ class Book extends CActiveRecord
 		));
 	}
 	
-	// »ñÈ¡Í¼ÊéÁÐ±í£¬ °´Ìí¼ÓÊ±¼äÅÅÐò
+	public $pageSize = 10;
+	
+	// èŽ·å–å›¾ä¹¦åˆ—è¡¨ï¼Œ æŒ‰æ·»åŠ æ—¶é—´æŽ’åº
 	public function getList() {
 		$timeline = intval( Yii::app()->request->getParam('timeline') );
 		$page = intval( Yii::app()->request->getParam('page') );
 		$page = max($page, 1);
 		
-		$pageSize = 10;
 		$criteria=new CDbCriteria;
+		$criteria->select = 'bookid,summary,content,timeline';
 		$criteria->order = 'timeline DESC';
 		if($timeline > 0) $criteria->compare('timeline', '<='.$timeline);
-		$criteria->offset = ($page-1)*$pageSize;
-		$criteria->limit = $pageSize;
+		$criteria->offset = ($page-1) * $this->pageSize;
+		$criteria->limit = $this->pageSize;
 		
 		$data = $this->findAll($criteria);
 		$result = array();
@@ -118,7 +130,7 @@ class Book extends CActiveRecord
 			$tmp['numRaters'] = $content['numRaters'];
 			$tmp['tags'] = $content['tags'];
 			$tmp['img'] = $content['img'];
-			$tmp['summary'] = empty($content['description']) ? mb_substr($content['summary'], 0, 60, 'utf8').'...' : $content['description'];
+			$tmp['summary'] = mb_substr($item->summary, 0, 60, 'utf8').'...';
 			
 			$result[] = $tmp;
 		}
@@ -126,7 +138,7 @@ class Book extends CActiveRecord
 		return array($page, $result, $data[0]->timeline);
 	}
 	
-	// ¸ñÊ½»¯ ´Ó½Ó¿Ú»ñÈ¡µÄÊý¾Ý
+	// æ ¼å¼åŒ– ä»ŽæŽ¥å£èŽ·å–çš„æ•°æ®
 	public function formatBookData($data) {
 		$book = array();
 		$book['title'] = $data['title'];
@@ -151,7 +163,7 @@ class Book extends CActiveRecord
 		return $book;
 	}
 	
-	// Ìí¼ÓÍ¼Êé
+	// æ·»åŠ å›¾ä¹¦
 	public function addBook($bookid) {
 		$data = Curl::model()->request('http://api.douban.com/v2/book/'.$bookid.'?fields=title,tags,author,rating,images,id,summary,author_intro,catalog&apikey=04e2958bfe6ac33e0ea7c0a3fb4049ba');
 		$data && $data = CJSON::decode($data);
@@ -162,6 +174,11 @@ class Book extends CActiveRecord
 		
 		$model = Book::model();
 		$model->bookid = $book['bookid'];
+		$model->summary = $book['summary'];
+		$model->author_intro = $book['author_intro'];
+		$model->catalog = $book['catalog'];
+		
+		unset($book['bookid'], $book['summary'], $book['author_intro'], $book['catalog']);
 		$model->content = CJSON::encode($book);
 		$model->weights = 1;
 		$model->timeline = time();
