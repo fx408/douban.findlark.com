@@ -6,7 +6,7 @@
 <div id="tag_list">
 	<?php
 	foreach($tags as $tag) {
-		printf('<a href="/search/tag/?tag=%s">%s</a>', $tag, $tag);
+		printf('<a href="/search/tag/keyword/%s">%s</a>', $tag, $tag);
 	}
 	?>
 </div>

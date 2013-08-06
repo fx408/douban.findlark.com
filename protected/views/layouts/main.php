@@ -43,6 +43,7 @@
 			<div class="menu_list hide">
 				<ul data-role="listview" data-theme="c" data-inset="true">
 					<li><a href="/" data-transition="slide">首页</a></li>
+					<li><a href="/search/index" data-transition="slide">搜索书籍</a></li>
 					<?php if($this->bookid) { ?>
 					<li><a href="/book/detail/id/<?php echo $this->bookid;?>" data-transition="slide">书籍详细</a></li>
 					<li><a href="/note/index/bookid/<?php echo $this->bookid;?>" data-transition="slide">读书笔记</a></li>

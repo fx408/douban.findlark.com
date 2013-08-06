@@ -6,6 +6,7 @@ class DoubanController extends Controller{
 	// 查询图片
 	public function getBook($bookid, $titleSuffix = '') {
 		$data = Book::model()->findByPk($bookid);
+		if(empty($data)) $data = Book::model()->addBook($bookid);
 		if(empty($data)) throw new Exception('书籍已被删除或不存在!');
 		
 		$data = CJSON::decode($data->content, false);

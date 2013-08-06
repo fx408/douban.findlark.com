@@ -123,7 +123,8 @@ class Book extends CActiveRecord
 		return array($page, $result);
 	}
 	
-	public function addBook($data) {
+	// 格式化 从接口获取的数据
+	public function formatBookData($data) {
 		$book = array();
 		$book['title'] = $data['title'];
 		$book['author'] = implode(',', $data['author']);
@@ -136,29 +137,32 @@ class Book extends CActiveRecord
 		$book['author_intro'] = $data['author_intro'];
 		$book['catalog'] = $data['catalog'];
 		
-		$data['tags'] = array_slice($data['tags'],0,3);
+		$data['tags'] = array_slice($data['tags'], 0, 3);
 		$book['tags'] = array();
 		foreach($data['tags'] as $item) {
 			$book['tags'][] = $item['name'];
 		}
 		$book['tags'] = implode(', ', $book['tags']);
 		
-		$bookid = $data['id'];
-		
-		$find = $this->findByPk($bookid);
-		if(empty($find)) {
-			$model = Book::model();
-			$model->bookid = $bookid;
-			$model->content = CJSON::encode($book);
-			$model->weights = 1;
-			$model->timeline = time();
-			$model->isNewRecord = true;
-			if(!$model->save()) {
-				// throw new Exception(var_export($model->getErrors(), true));
-			}
-		}
-		
-		$book['bookid'] = $bookid;
+		$book['bookid'] = $data['id'];
 		return $book;
+	}
+	
+	// 添加图书
+	public function addBook($bookid) {
+		$data = Curl::model()->request('http://api.douban.com/v2/book/'.$bookid.'?fields=title,tags,author,rating,images,id,summary,author_intro,catalog&apikey=04e2958bfe6ac33e0ea7c0a3fb4049ba');
+		$data && $data = CJSON::decode($data);
+		
+		if(!$data || empty($data['title'])) return null;
+		
+		$book = $this->formatBookData($data);
+		
+		$model = Book::model();
+		$model->bookid = $book['bookid'];
+		$model->content = CJSON::encode($book);
+		$model->weights = 1;
+		$model->timeline = time();
+		$model->isNewRecord = true;
+		return $model->save() ? $model : null;
 	}
 }
