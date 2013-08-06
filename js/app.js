@@ -25,7 +25,7 @@ function _AppBook() {
 	this.bookListAddress = '/book/list';
 
 	this.loadInfo = function(msg) {
-		$("#load-more").children().html(msg);
+		$(".loading").children().html(msg);
 	}
 	
 	// 显示列表
@@ -41,7 +41,7 @@ function _AppBook() {
 			html += tmp;
 		}
 		
-		$("#book-list").append(html);
+		$("div.book-list").append(html);
 	}
 	
 	// 获取列表
@@ -54,11 +54,13 @@ function _AppBook() {
 		_this.loadInfo('加载中...');
 		this.ajaxRequest(
 			this.bookListAddress,
-			{page: this.page},
+			{page: this.page, timeline: this.getTimeline()},
 			function(data) {
 				_this.listBusy = false;
+				
 				if(data.error == 0) {
 					_this.page = ++data.params.page;
+					_this.setTimeline(data.params.timeline);
 					_this.showList(data.msg);
 					_this.loadInfo('点击加载更多...');
 				} else {
@@ -93,6 +95,62 @@ function _AppBook() {
 			})
 		});
 	}
+	
+	this.getTimeline = function() {
+		return LDB.item(this.keyPrefix+'timeline') || 0;
+	}
+	
+	this.setTimeline = function(timeline) {
+		timeline && LDB.set(this.keyPrefix+'timeline', timeline);
+	}
 }
 
+// 本地 key-value 数据库
+var LocalDatabase = function() {
+	this.LS = localStorage;
+	this.LS = sessionStorage;
+}
+
+LocalDatabase.prototype.item = function(k) {
+	var val = this.LS.getItem(k);
+	if(val===null) return null;
+
+	try{
+		val = JSON.parse(val);
+	} catch(e) {
+		val = val;
+	}
+
+	return val;
+};
+
+LocalDatabase.prototype.set = function(k, val) {
+	try{
+		if(typeof(val) != 'string') val = JSON.stringify(val);
+
+		this.LS.setItem(k, val);
+	} catch(e) {
+	}
+};
+
+LocalDatabase.prototype.list = function() {
+	var k = '', list = {};
+
+	for(var i = 0, l = this.LS.length; i < l; i++) {
+		k = this.LS.key(i);
+		list[k] = this.item(k);
+	}
+
+	return list;
+};
+
+LocalDatabase.prototype.clear = function() {
+	this.LS.clear();
+};
+
+LocalDatabase.prototype.del = function(k) {
+	this.LS.removeItem(k);
+};
+
+var LDB = new LocalDatabase();
 var AppBook = new _AppBook;

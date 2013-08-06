@@ -60,6 +60,6 @@ class SearchController extends DoubanController {
 			$data = '查询失败!点击重试。';
 		}
 		
-		$this->_end($error, $data, array('page'=> $page));
+		$this->_end($error, $data, array('page'=> $page, 'timeline'=> 0));
 	}
 }

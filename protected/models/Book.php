@@ -91,13 +91,16 @@ class Book extends CActiveRecord
 		));
 	}
 	
+	// 获取图书列表， 按添加时间排序
 	public function getList() {
+		$timeline = intval( Yii::app()->request->getParam('timeline') );
 		$page = intval( Yii::app()->request->getParam('page') );
 		$page = max($page, 1);
 		
 		$pageSize = 10;
 		$criteria=new CDbCriteria;
 		$criteria->order = 'timeline DESC';
+		if($timeline > 0) $criteria->compare('timeline', '<='.$timeline);
 		$criteria->offset = ($page-1)*$pageSize;
 		$criteria->limit = $pageSize;
 		
@@ -120,7 +123,7 @@ class Book extends CActiveRecord
 			$result[] = $tmp;
 		}
 		
-		return array($page, $result);
+		return array($page, $result, $data[0]->timeline);
 	}
 	
 	// 格式化 从接口获取的数据

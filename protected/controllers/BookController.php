@@ -9,13 +9,13 @@ class BookController extends DoubanController {
 	
 	// 列表
 	public function actionList() {
-		list($page, $data) = Book::model()->list;
+		list($page, $data, $timeline) = Book::model()->list;
 		$error =  0;
 		if(empty($data)) {
 			$error = 1;
 			$data = '没有更多了...';
 		}
-		$this->_end($error, $data, array('page'=> $page));
+		$this->_end($error, $data, array('page'=> $page, 'timeline'=> $timeline));
 	}
 	
 	// 试读详细

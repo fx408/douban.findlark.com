@@ -1,8 +1,8 @@
-<div id="book-list">
+<div class="book-list">
 	
 </div>
 
-<pre class="loading" id="load-more">
+<pre class="loading"">
 	<strong>点击加载更多...</strong>
 </pre>
 
@@ -13,8 +13,10 @@
 	?>
 	
 	$(function() {
+		console.log(AppBook.bookListAddress);
+		
 		AppBook.getBookList();
-		$("#load-more").click(function() {
+		$(".loading").click(function() {
 			AppBook.getBookList();
 		});
 	});

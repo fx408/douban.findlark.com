@@ -16,7 +16,7 @@ class SiteController extends DoubanController {
 	
 	public function actionIndex() {
 		$this->title = '书籍列表';
-		$this->render('/book/index');
+		$this->render('/book/index', array('address'=>'/book/list'));
 	}
 	
 	public function actionError() {
