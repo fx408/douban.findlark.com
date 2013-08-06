@@ -30,18 +30,24 @@
 	<?php } ?>
 	</ul>
 	
+	<?php if(!empty($data->author_intro)) { ?>
 	<div data-role="collapsible" data-collapsed="false" data-theme="b">
 		<h3>作者介绍</h3>
 		<pre><?php echo CHtml::encode($data->author_intro);?></pre>
 	</div>
+	<?php } ?>
 	
+	<?php if(!empty($data->catalog)) { ?>
 	<div data-role="collapsible" data-collapsed="false" data-theme="b">
 		<h3>目录一览</h3>
-		<pre><?php echo  CHtml::encode($data->catalog);?></pre>
+		<pre><?php echo CHtml::encode($data->catalog);?></pre>
 	</div>
+	<?php } ?>
 	
+	<?php if(!empty($data->summary)) { ?>
 	<div data-role="collapsible" data-collapsed="false" data-theme="b">
 		<h3>内容提要</h3>
-		<pre><?php echo  CHtml::encode($data->summary);?></pre>
+		<pre><?php echo CHtml::encode($data->summary);?></pre>
 	</div>
+	<?php } ?>
 </div>
