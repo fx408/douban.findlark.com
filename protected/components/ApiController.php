@@ -13,4 +13,11 @@ class ApiController extends Controller{
 		
 		return $book;
 	}
+
+	// end
+	public function _end($error = 0, $msg = 'success!', $params = array()) {
+		$arr = array('error'=>$error, 'msg'=>$msg, 'param'=>$params);
+		echo CJSON::encode($arr);
+		Yii::app()->end();
+	}
 }

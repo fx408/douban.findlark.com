@@ -6,9 +6,11 @@ class BookController extends ApiController {
 		$data = $this->getBook($id);
 		if(!$data) $this->_end(1, '获取书籍数据失败!');
 		
-		$reading = BookHelper::getBookReading($data->bookid);
+		$reading = BookHelper::getBookReading($data['bookid']);
+
+		$data['reading'] = $reading;
 		
-		$this->_end(0, array($data, $reading));
+		$this->_end(0, $data);
 	}
 	
 	// 列表
@@ -29,3 +31,4 @@ class BookController extends ApiController {
 		$this->_end(0, array('title'=> $title, 'content'=> $content));
 	}
 }
+

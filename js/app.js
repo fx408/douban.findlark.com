@@ -7,15 +7,21 @@ var bookTemplate = ''
 + '		<div>'
 + '			<a href="/book/detail/id/{$bookid}" class="ui-link" data-transition="none">{$title}</a>'
 + '		</div>'
++ '		<div>{$author}</div>'
 + '		<div>'
-+ '			{$author},'
-+ '				<small><em class="text-red">{$score}</em>分</small>'
-+ '				<small class="muted">({$numRaters}评)</small>'
++ '			<em class="text-red">{$score}</em>分'
++ '			<small class="muted">({$numRaters}评)</small>'
 + '		</div>'
-+ '  <div><a href="/note/index/bookid/{$bookid}" class="ui-link" data-transition="none">读书笔记</a></div>'
 + '	</div>'
 + '	<div class="clear"></div>'
-+ '	<div>{$summary}</div>'
++ '	<div>'
++ '		{$summary}'
++ '		<div>'
++	'			<a href="/book/detail/id/{$bookid}" class="ui-link" data-transition="none">查看详细</a>'
++	'			<small class="muted"> | </small> <a href="/note/index/bookid/{$bookid}" class="ui-link" data-transition="none">读书笔记</a>'
++	'			<small class="muted"> | </small> <a href="javascript:AppBook.collection({$bookid}, \'{$title}\');" class="ui-link" data-transition="none">收藏本书</a>'
++ '		</div>'
++ '</div>'
 + '</div>';
 
 function _AppBook() {
@@ -103,12 +109,40 @@ function _AppBook() {
 	this.setTimeline = function(timeline) {
 		timeline && LDB.set(this.keyPrefix+'timeline', timeline);
 	}
+	
+	this.collection = function(bookid, bookTitle) {
+		var k = this.keyPrefix+'collection';
+		
+		var list = LocalDB.item(k) || {};
+		list[bookid] = bookTitle;
+		LocalDB.set(k, list);
+		
+		alert('收藏成功!');
+	}
+	
+	this.createCollectionList = function(template) {
+		var books = LocalDB.item(this.keyPrefix+'collection') || {};
+		var html = '';
+		
+		for(var k in books) {
+			html += template.replace('{$bookid}', k).replace('{$title}', books[k]);
+		}
+		
+		return html;
+	}
 }
 
 // 本地 key-value 数据库
 var LocalDatabase = function() {
-	this.LS = localStorage;
-	this.LS = sessionStorage;
+	this.LS = null;
+	
+	this.sessionStorage = function() {
+		return window.sessionStorage;
+	}
+	
+	this.localStorage = function() {
+		return window.localStorage;
+	}
 }
 
 LocalDatabase.prototype.item = function(k) {
@@ -153,4 +187,9 @@ LocalDatabase.prototype.del = function(k) {
 };
 
 var LDB = new LocalDatabase();
+LDB.LS = LDB.sessionStorage();
+
+var LocalDB = new LocalDatabase();
+LocalDB.LS = LocalDB.localStorage();
+
 var AppBook = new _AppBook;

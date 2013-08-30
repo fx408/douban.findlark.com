@@ -34,4 +34,8 @@ class BookController extends DoubanController {
 			'readingId'=> $id
 		));
 	}
+	
+	public function actionCollection() {
+		$this->render('collection');
+	}
 }

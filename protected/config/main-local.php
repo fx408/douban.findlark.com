@@ -30,15 +30,6 @@ return array(
 		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
-		
-		'admin'=>array(
-			'password'=>'1',
-		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1'),
-		),
-		'sch',
-		'schAdmin',
-		'douban',
 	),
 
 	// application components
@@ -55,9 +46,6 @@ return array(
 			'rules'=>array(
 				'<action:(logout|error|proxy)>' => 'site/<action>',
 				'' => 'site/index',
-				//'login' => 'admin/default/login',
-				'<controller:site>/<action:\w+>' => 'site/<action>',
-				'<controller:blog>/<id:\d+>' => '<controller>/show/id/<id>',
 			),
 		),
 		// uncomment the following to use a MySQL database
